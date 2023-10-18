@@ -1,20 +1,61 @@
+import dotenv from "dotenv";
+import { useState, useEffect } from 'react';
+// import { useState } from 'react';
+// import dummy from "../public/books.json";
+import axios from 'axios'
+import Booklist from "../components/Booklist";
+import Header from "../components/Header"; // Header 컴포넌트 불러오기
+import '../App.css'
 
+dotenv.config();
 
 const Home = () => {
+  // const blist = JSON.parse(JSON.stringify(dummy));
+  // const [booklst,] = useState(blist); // 변경
+  // fetch의 url은 dotenv 처리해야 한다.
 
+  const [booklst, setBooklst] = useState([]);
+
+  useEffect(() => {
+    // 382p.
+    // 오류, Bookintro.js 같다.
+    const fetchdata = async () => {
+      try {
+        // axios 사용
+        const resp = await axios.get(`${process.env.BHOST}:${process.env.BPORT}/selectbook`)
+          // .then(res => res.json())
+          // .then(() => setBooklst(JSON.parse(JSON.stringify(resp.data)))
+          // .then(res => res.json())
+          // .then(res => JSON.parse(JSON.stringify(res)))
+          // .then(setBooklst)
+          // .then(() => setBooklst(resp.data))
+          // .then(res => {
+          //   let v = JSON.parse(JSON.stringify(res.data));
+          //   setBooklst(v);
+          //   return (v);
+          // })
+          .catch(console.error)
+        // console.log("Axios response: ", resp.data)
+        setBooklst(resp.data) // 정상
+      } catch (e) {
+        console.log(e);
+      }
+    };
+    fetchdata();
+
+  }, [])
+
+  // console.log("state booklst: ", booklst); // 정상
   return (
-    <div >
-        <h1>홈페이지, 라우터의 root 전자책 시작 페이지</h1>
-        <p>라우터의 root은 이 페이지를 표시해야 한다.
-        로그인이 없어도 책 목록을 표시하며 책장으로 가져오기와
-        책읽기는 로그인을 해야 가능하다.</p>
-        <p>Home.js 안에서 컴포넌트를 만든다.</p>
-        <p>React-Router-Dom Package는 
-        개별 project의 root folder 에서 설치해야 정상 작동했다.
-        package.json의 react와 같은 위치다.</p><p/>
-        
+    <div className="home-container">
+      <div className="header-container">
+        <Header />
+      </div>
+
+      <Booklist booklist={booklst} />
+
     </div>
   );
 };
-//components : Navbar BookList
+
 export default Home;
